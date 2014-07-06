@@ -1,0 +1,23 @@
+{
+  "name": "BreadfishPlusPlus-TS3-Info",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BreadfishPlusPlus/BreadfishPlusPlus-TS3-Info.git"
+  },
+  "author": "Martin Rump <admin@maddin.cc>",
+  "license": "GPL v2",
+  "bugs": {
+    "url": "https://github.com/BreadfishPlusPlus/BreadfishPlusPlus-TS3-Info/issues"
+  },
+  "homepage": "https://github.com/BreadfishPlusPlus/BreadfishPlusPlus-TS3-Info",
+  "dependencies": {
+    "node-teamspeak": "^1.0.4",
+    "cron": "^1.0.4",
+    "underscore": "^1.6.0",
+    "debug": "^1.0.2",
+    "async": "^0.9.0"
+  }
+}
