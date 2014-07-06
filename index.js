@@ -69,6 +69,7 @@ var requestChannellist = function () {
 };
 
 var updateCache = function () {
+    REQUEST_CACHE.lastUpdate = Math.round(Date.now() / 1e3);
     requestServerinfo();
     requestChannellist();
     requestClientlist();
