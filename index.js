@@ -35,7 +35,7 @@ var requestClientInfo = function (client, callback) {
     TeamspeakQueryClient.send("clientinfo", {
         clid: client.clid
     }, function (err, response) {
-        debug('Requesting clientinfo', err);
+        debug('Requesting client info (%s)', client.client_nickname, err);
         var newClient = {
             "name": response.client_nickname,
             "input_muted": !!response.client_input_muted,
@@ -51,10 +51,12 @@ var requestClientInfo = function (client, callback) {
 var requestClientlist = function () {
     TeamspeakQueryClient.send("clientlist", function (err, response) {
         debug("Requesting Client list", err);
+        if (!_.isArray(response)) {
+            response = [response];
+        }
         var onlineList = _.filter(response, function (client) {
             return client.client_type !== 1;
         });
-
         async.map(onlineList, requestClientInfo, function (err, results) {
             REQUEST_CACHE.clients = results;
         });
