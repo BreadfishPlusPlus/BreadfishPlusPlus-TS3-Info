@@ -104,7 +104,10 @@ TeamspeakQueryClient.on("close", function (queue) {
 http.createServer(function (req, res) {
     var ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
 
-    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.writeHead(200, {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+    });
     res.end(JSON.stringify(REQUEST_CACHE));
     debug("Serving reqeust from %s", ipAddress);
 }).listen(config.webport);
