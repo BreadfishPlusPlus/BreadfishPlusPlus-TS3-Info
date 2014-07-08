@@ -5,8 +5,7 @@
     "pass": "query_password",
     "ts": {
         "virtualServer": 1,
-        "address": "",
-        "port": 9987
+        "address": ""
     },
     "croninterval": "*/5 * * * *",
     "webport": 80

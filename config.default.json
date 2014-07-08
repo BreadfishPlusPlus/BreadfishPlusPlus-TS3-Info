@@ -1,10 +1,10 @@
 {
-    "user": "",
-    "pass": "",
+    "user": "query_username",
+    "pass": "query_password",
     "ts": {
         "virtualServer": 1,
-        "address": "127.0.0.1"
+        "address": ""
     },
     "croninterval": "*/5 * * * *",
-    "webport": 13357
+    "webport": 80
 }
