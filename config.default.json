@@ -1,0 +1,10 @@
+{
+    "user": "",
+    "pass": "",
+    "ts": {
+        "virtualServer": 1,
+        "address": "127.0.0.1"
+    },
+    "croninterval": "*/5 * * * *",
+    "webport": 13357
+}
