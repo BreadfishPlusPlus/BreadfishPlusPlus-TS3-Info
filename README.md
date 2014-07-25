@@ -5,9 +5,11 @@
     "pass": "query_password",
     "ts": {
         "virtualServer": 1,
-        "address": ""
+        "address": "127.0.0.1",
+        "port": 9987
     },
-    "croninterval": "*/5 * * * *",
+    "cacheUpdateCronjob": "*/5 * * * *",
+    "reconnectInterval": 60000,
     "webport": 80
 }
 ```
