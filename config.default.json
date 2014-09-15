@@ -6,7 +6,7 @@
         "address": "127.0.0.1",
         "port": 9987
     },
-    "cacheUpdateCronjob": "*/5 * * * *",
+    "cacheLifetime": 300000,
     "reconnectInterval": 60000,
     "webport": 80
 }

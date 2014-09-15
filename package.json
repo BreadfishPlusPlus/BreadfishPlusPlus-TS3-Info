@@ -1,26 +1,27 @@
 {
-  "name": "BreadfishPlusPlus-TS3-Info",
-  "version": "1.0.2",
-  "main": "index.js",
+  "name": "Teamspeak-Info",
+  "version": "1.0.3",
+  "main": "lib/index.js",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/BreadfishPlusPlus/BreadfishPlusPlus-TS3-Info.git"
+    "url": "https://github.com/BreadfishPlusPlus/Teamspeak-Info.git"
   },
   "author": "Martin Rump <admin@maddin.cc>",
   "license": "GPL v2",
   "bugs": {
-    "url": "https://github.com/BreadfishPlusPlus/BreadfishPlusPlus-TS3-Info/issues"
+    "url": "https://github.com/BreadfishPlusPlus/Teamspeak-Info/issues"
   },
   "scripts": {
-    "start": "forever start -o stdout.log -e stderr.log -a index.js"
+    "start": "forever start -o stdout.log -e stderr.log -a --uid \"bppts3\" index.js --prod"
   },
-  "homepage": "https://github.com/BreadfishPlusPlus/BreadfishPlusPlus-TS3-Info",
+  "homepage": "https://github.com/BreadfishPlusPlus/Teamspeak-Info-Info",
   "dependencies": {
-    "node-teamspeak": "^1.0.4",
-    "cron": "^1.0.4",
-    "underscore": "^1.6.0",
+    "async": "^0.9.0",
+    "cheerio": "^0.17.0",
     "debug": "^1.0.2",
-    "async": "^0.9.0"
+    "node-teamspeak": "^1.0.4",
+    "request": "^2.42.0",
+    "underscore": "^1.6.0"
   }
 }
