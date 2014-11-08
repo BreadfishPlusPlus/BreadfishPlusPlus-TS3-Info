@@ -20,5 +20,8 @@
     "node-teamspeak": "^1.0.4",
     "request": "^2.47.0",
     "underscore": "^1.7.0"
+  },
+  "engines": {
+    "node": "0.10.x"
   }
 }
