@@ -15,10 +15,10 @@
   "homepage": "https://github.com/BreadfishPlusPlus/Teamspeak-Info-Info",
   "dependencies": {
     "async": "^0.9.0",
-    "cheerio": "^0.17.0",
-    "debug": "^1.0.2",
+    "cheerio": "^0.18.0",
+    "debug": "^2.1.0",
     "node-teamspeak": "^1.0.4",
-    "request": "^2.42.0",
-    "underscore": "^1.6.0"
+    "request": "^2.47.0",
+    "underscore": "^1.7.0"
   }
 }
