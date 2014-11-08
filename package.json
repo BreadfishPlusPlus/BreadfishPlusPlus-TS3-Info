@@ -1,6 +1,6 @@
 {
   "name": "Teamspeak-Info",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "lib/index.js",
   "private": true,
   "repository": {
@@ -11,9 +11,6 @@
   "license": "GPL v2",
   "bugs": {
     "url": "https://github.com/BreadfishPlusPlus/Teamspeak-Info/issues"
-  },
-  "scripts": {
-    "start": "mkdir -p log && node lib/index.js | tee -a log/`date +%d_%m_%Y`.log"
   },
   "homepage": "https://github.com/BreadfishPlusPlus/Teamspeak-Info-Info",
   "dependencies": {
