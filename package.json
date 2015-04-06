@@ -12,7 +12,7 @@
   "bugs": {
     "url": "https://github.com/BreadfishPlusPlus/Teamspeak-Info/issues"
   },
-  "homepage": "https://github.com/BreadfishPlusPlus/Teamspeak-Info-Info",
+  "homepage": "https://github.com/BreadfishPlusPlus/Teamspeak-Info",
   "dependencies": {
     "async": "^0.9.0",
     "cheerio": "^0.18.0",
