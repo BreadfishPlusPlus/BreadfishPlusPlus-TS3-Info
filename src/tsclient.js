@@ -4,7 +4,6 @@ var Promise         = require("bluebird");
 var TeamSpeakClient = require("node-teamspeak");
 var debug           = require("debug")("tsclient");
 var _               = require("lodash");
-var breadfish       = require(__dirname + "/breadfish.js");
 
 var CACHED_DATA = {
     lastUpdate: 0
@@ -118,7 +117,7 @@ function requestChannels(client) {
     });
 }
 
-function requestClients(client, clientIp) {
+function requestClients(client) {
     return new Promise(function (resolve, reject) {
         debug("requesting clients");
 
@@ -128,7 +127,7 @@ function requestClients(client, clientIp) {
                 debug("error requesting clients: %j", err);
                 return reject(err.msg);
             }
-            debug("successfully requested clients");
+            debug("successfully requested clients", response);
 
             if (!_.isArray(response)) {
                 response = [response];
@@ -138,23 +137,21 @@ function requestClients(client, clientIp) {
                 return client.client_type !== 1;
             });
 
-            breadfish
-                .getTokens(clientIp)
-                .then(function mapClients(qs) {
-                    return Promise.map(response, function (client) {
-                        return breadfish.getUser(qs, client, clientIp);
-                    });
-                })
-                .then(function (clients) {
-                    CACHED_DATA.clients = clients;
-                    return resolve(client);
-                })
-                .catch(reject.bind(null));
+            var clients = response.map(function (client) {
+                return {
+                    name: client.client_nickname,
+                    channel: client.cid
+                };
+            });
+
+            CACHED_DATA.clients = clients;
+
+            return resolve(client);
         });
     });
 }
 
-exports.getData = function (clientIp) {
+exports.getData = function () {
     return new Promise(function (resolve, reject) {
 
         debug(CACHED_DATA.lastUpdate);
@@ -169,9 +166,7 @@ exports.getData = function (clientIp) {
             .then(selectVirtualServer)
             .then(requestServerinfo)
             .then(requestChannels)
-            .then(function (client) {
-                return requestClients(client, clientIp);
-            })
+            .then(requestClients)
             .then(function () {
                 CACHED_DATA.lastUpdate = Date.now();
                 return resolve(_.clone(CACHED_DATA));

@@ -19,7 +19,6 @@
     "eslint": "^1.4.3",
     "lodash": "^3.10.1",
     "node-teamspeak": "^1.0.4",
-    "request": "^2.57.0",
     "request-ip": "^1.1.4"
   },
   "engines": {

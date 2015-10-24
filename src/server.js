@@ -7,7 +7,7 @@ var TsClient    = require(__dirname + "/tsclient.js");
 require("http").createServer(function (request, response) {
     var clientIp = getClientIp(request);
     debug("serving reqeust from %s", clientIp);
-    return TsClient.getData(clientIp)
+    return TsClient.getData()
         .then(function (data) {
             response.writeHead(200, {
                 "Content-Type": "application/json; charset=\'utf8\'; charset=utf8",
