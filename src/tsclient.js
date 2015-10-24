@@ -118,7 +118,7 @@ function requestChannels(client) {
     });
 }
 
-function requestClients(client) {
+function requestClients(client, clientIp) {
     return new Promise(function (resolve, reject) {
         debug("requesting clients");
 
@@ -139,10 +139,10 @@ function requestClients(client) {
             });
 
             breadfish
-                .getTokens()
+                .getTokens(clientIp)
                 .then(function mapClients(qs) {
                     return Promise.map(response, function (client) {
-                        return breadfish.getUser(qs, client);
+                        return breadfish.getUser(qs, client, clientIp);
                     });
                 })
                 .then(function (clients) {
@@ -154,7 +154,7 @@ function requestClients(client) {
     });
 }
 
-exports.getData = function () {
+exports.getData = function (clientIp) {
     return new Promise(function (resolve, reject) {
 
         debug(CACHED_DATA.lastUpdate);
@@ -169,7 +169,9 @@ exports.getData = function () {
             .then(selectVirtualServer)
             .then(requestServerinfo)
             .then(requestChannels)
-            .then(requestClients)
+            .then(function (client) {
+                return requestClients(client, clientIp);
+            })
             .then(function () {
                 CACHED_DATA.lastUpdate = Date.now();
                 return resolve(_.clone(CACHED_DATA));

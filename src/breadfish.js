@@ -1,17 +1,21 @@
 "use strict";
 
-var Promise = require("bluebird");
-var request = require("request");
-var _       = require("lodash");
-var debug   = require("debug")("breadfish");
+var Promise     = require("bluebird");
+var request     = require("request");
+var _           = require("lodash");
+var debug       = require("debug")("breadfish");
 
-exports.getTokens = function getTokens() {
+exports.getTokens = function getTokens(clientIp) {
     debug("getTokens()");
     return new Promise(function (resolve, reject) {
         request({
             uri: "http://forum.sa-mp.de/index.php?members-list/",
             method: "GET",
-            followAllRedirects: true
+            followAllRedirects: true,
+            headers: {
+                "X-Forwarded-For": clientIp,
+                "User-Agent": "Breadfish++ Teamspeak-Info Token Abfrage"
+            }
         }, function (error, response, body) {
             if (error) {
                 return reject(error);
@@ -28,7 +32,7 @@ exports.getTokens = function getTokens() {
     });
 };
 
-exports.getUser = function (qs, client) {
+exports.getUser = function (qs, client, clientIp) {
     debug("getUser(%s, %s)", JSON.stringify(qs), JSON.stringify(client));
     return new Promise(function (resolve, reject) {
         request({
@@ -43,6 +47,10 @@ exports.getUser = function (qs, client) {
                 "interfaceName": "wcf\\data\\ISearchAction",
                 "parameters[data][searchString]": client.client_nickname,
                 "parameters[data][includeUserGroups]": "0"
+            },
+            headers: {
+                "X-Forwarded-For": clientIp,
+                "User-Agent": "Breadfish++ Teamspeak-Info User Abfrage"
             }
         }, function (error, response, json) {
             if (error) {
