@@ -22,7 +22,7 @@
     "request-ip": "^1.1.4"
   },
   "engines": {
-    "node": "4.2.x"
-  },
-  "devDependencies": {}
+    "node": "4.2.x",
+    "npm": "3.3.x"
+  }
 }
