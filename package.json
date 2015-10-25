@@ -22,7 +22,7 @@
   },
   "engines": {
     "node": "4.2.x",
-    "npm": "2.14.7"
+    "npm": "3.3.x"
   },
   "devDependencies": {
     "eslint": "^1.7.3"
