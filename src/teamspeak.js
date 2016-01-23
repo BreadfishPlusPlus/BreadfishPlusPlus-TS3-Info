@@ -12,6 +12,7 @@ module.exports = class Teamspeak {
         this.channellist = {};
         this.clientlist = {};
         this.lastUpdate = null;
+        this.error = null;
 
         this.setup();
     }
@@ -34,25 +35,27 @@ module.exports = class Teamspeak {
 
             clientlist: this.clientlist,
 
-            lastUpdate: this.lastUpdate
+            lastUpdate: this.lastUpdate,
+
+            error: this.error
         }, {
             lastUpdate: 0,
             address: process.env.TS_ADDRESS,
-            "port": null,
-            "cacheLifetime": parseInt(process.env.CHECK_INTERVAL, 10),
-            "name": null,
-            "welcomemessage": null,
-            "platform": null,
-            "version": null,
-            "uptime": 0,
-            "maxclients": 0,
-            "channellist": {},
-            "clientlist": {}
+            port: null,
+            cacheLifetime: parseInt(process.env.CHECK_INTERVAL, 10),
+            name: null,
+            welcomemessage: null,
+            platform: null,
+            version: null,
+            uptime: 0,
+            maxclients: 0,
+            channellist: {},
+            clientlist: {},
+            error: null
         });
     }
     setup() {
         debug(`setup`);
-        this.lastUpdate = Date.now();
         Promise.resolve()
             .bind(this)
             .then(this.connect)
@@ -62,7 +65,9 @@ module.exports = class Teamspeak {
             .then(this.requestChannels)
             .then(this.requestClients)
             .then(this.close)
-            .then(this.setupInterval);
+            .then(this.setupInterval)
+            .then(() => this.lastUpdate = Date.now())
+            .catch((error) => this.error = error);
     }
     connect() {
         return new Promise((resolve, reject) => {
