@@ -1,6 +1,6 @@
 {
   "name": "teamspeak-info",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "main": "src/index.js",
   "private": true,
   "repository": {
@@ -14,17 +14,17 @@
   },
   "homepage": "https://github.com/BreadfishPlusPlus/Teamspeak-Info",
   "dependencies": {
-    "bluebird": "^2.10.0",
+    "bluebird": "^3.1.1",
     "debug": "^2.1.0",
-    "lodash": "^3.10.1",
-    "node-teamspeak": "^1.0.4",
+    "lodash": "^4.0.0",
+    "node-teamspeak": "^1.0.10",
     "request-ip": "^1.1.4"
   },
   "engines": {
-    "node": "4.2.x",
-    "npm": "3.3.x"
+    "node": "5.5.x",
+    "npm": "3.5.x"
   },
   "devDependencies": {
-    "eslint": "^1.7.3"
+    "eslint": "^1.10.3"
   }
 }
