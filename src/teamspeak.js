@@ -56,6 +56,7 @@ module.exports = class Teamspeak {
     }
     setup() {
         debug(`setup`);
+        this.error = null;
         Promise.resolve()
             .bind(this)
             .then(this.connect)
@@ -67,7 +68,7 @@ module.exports = class Teamspeak {
             .then(this.close)
             .then(this.setupInterval)
             .then(() => this.lastUpdate = Date.now())
-            .catch((error) => this.error = error);
+            .catch((error) => this.error = error.toString());
     }
     connect() {
         return new Promise((resolve, reject) => {
@@ -79,8 +80,8 @@ module.exports = class Teamspeak {
                 resolve();
             });
             this.client.once("error", (error) => {
-                debug("error", error);
-                reject(error);
+                debug(`error connecting in: ${JSON.stringify(error)}`);
+                reject(new Error(`Verbindung zum Teamspeak-Server konnte nicht hergestellt werden.`));
             });
             this.client.once("close", (queue) => {
                 debug("close", queue);
@@ -112,7 +113,7 @@ module.exports = class Teamspeak {
             }, (error) => {
                 if (error && error.id !== 0) {
                     debug(`error logging in: ${JSON.stringify(error)}`);
-                    reject(error.msg);
+                    reject(new Error(`Login zum Teamspeak-Server konnte nicht durchgeführt werden.`));
                 } else {
                     debug("successfully logged in");
                     resolve();
@@ -129,7 +130,7 @@ module.exports = class Teamspeak {
             }, (error) => {
                 if (error && error.id !== 0) {
                     debug(`error selecting virtual server: ${JSON.stringify(error)}`);
-                    reject(error.msg);
+                    reject(new Error(`VS konnte nicht ausgewählt werden.`));
                 } else {
                     debug("virtual server selected");
                     resolve();
@@ -145,7 +146,7 @@ module.exports = class Teamspeak {
                 this.serverinfo = {};
                 if (error && error.id !== 0) {
                     debug(`error requesting serverinfo: ${JSON.stringify(error)}`);
-                    reject(error.msg);
+                    reject(new Error(`Abfrage auf Server Informationen war fehlerhaft.`));
                 } else {
                     debug("serverinfo response", response);
                     this.serverinfo = response;
@@ -162,7 +163,7 @@ module.exports = class Teamspeak {
                 this.channellist = {};
                 if (error && error.id !== 0) {
                     debug(`error requesting channels: ${JSON.stringify(error)}`);
-                    reject(error.msg);
+                    reject(new Error(`Abfrage auf Channel Informationen war fehlerhaft.`));
                 } else {
                     debug("successfully requested channellist", response);
                     response.forEach((channel) => this.channellist[channel.cid] = channel.channel_name);
@@ -179,7 +180,7 @@ module.exports = class Teamspeak {
                 this.clientlist = {};
                 if (error && error.id !== 0) {
                     debug(`error requesting clients: ${JSON.stringify(error)}`);
-                    reject(error.msg);
+                    reject(new Error(`Abfrage auf Client Informationen war fehlerhaft.`));
                 } else {
                     debug("successfully requested clientlist", response);
 
