@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/BreadfishPlusPlus/Teamspeak-Info",
   "dependencies": {
-    "bluebird": "^3.2.2",
+    "bluebird": "^3.3.0",
     "debug": "^2.1.0",
     "lodash": "^4.3.0",
     "node-teamspeak": "^1.0.10",
