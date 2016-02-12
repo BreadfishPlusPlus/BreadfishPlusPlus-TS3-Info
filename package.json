@@ -7,8 +7,8 @@
     "type": "git",
     "url": "https://github.com/BreadfishPlusPlus/Teamspeak-Info.git"
   },
-  "author": "Martin Rump <admin@maddin.cc>",
-  "license": "GPL v2",
+  "author": "Martin Rump",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/BreadfishPlusPlus/Teamspeak-Info/issues"
   },
