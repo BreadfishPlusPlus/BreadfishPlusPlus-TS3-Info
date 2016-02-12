@@ -1,12 +1,12 @@
 "use strict";
 
-const getClientIp   = require("request-ip").getClientIp;
-const debug         = require("debug")("webserver");
-const Teamspeak     = require(__dirname + "/teamspeak.js");
-const ts            = new Teamspeak();
-const PORT          = parseInt(process.env.PORT, 10);
+const debug = require("debug")("webserver");
+import {getClientIp} from "request-ip";
+import {createServer} from "http";
+import cache from "./cache";
 
-require("http").createServer(function (request, response) {
+
+createServer((request, response) => {
     const clientIp = getClientIp(request);
     debug(`serving reqeust ${request.url} from ${clientIp}`);
 
@@ -17,6 +17,8 @@ require("http").createServer(function (request, response) {
         "Pragma": "no-cache",
         "Expires": "0"
     });
-    return response.end(JSON.stringify(ts.getData(), null, 2));
-}).listen(PORT);
-debug(`webserver started @ port ${PORT}`);
+    return response.end(JSON.stringify(cache.getData(), null, 2));
+}).listen(process.env.PORT);
+debug(`webserver started @ port ${process.env.PORT}`);
+
+cache.requestData();

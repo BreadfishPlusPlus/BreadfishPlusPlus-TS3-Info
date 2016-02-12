@@ -1,6 +1,6 @@
 {
   "name": "teamspeak-info",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "main": "src/index.js",
   "private": true,
   "repository": {
@@ -13,9 +13,23 @@
     "url": "https://github.com/BreadfishPlusPlus/Teamspeak-Info/issues"
   },
   "homepage": "https://github.com/BreadfishPlusPlus/Teamspeak-Info",
+  "scripts": {
+    "start": "NODE_ENV=production DEBUG=\"*\" node build/index.js",
+    "test": "npm run clean -s && npm run build && NODE_ENV=development DEBUG=\"*\" node ./test.js",
+    "clean": "rm -rf build/ > /dev/null 2>&1",
+    "build": "babel src --out-dir build",
+    "postinstall": "npm run clean -s && npm run build"
+  },
   "dependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-eslint": "^4.1.8",
+    "babel-plugin-transform-async-to-generator": "^6.5.0",
+    "babel-plugin-transform-es2015-destructuring": "^6.5.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.5.2",
+    "babel-plugin-transform-es2015-parameters": "^6.5.0",
     "bluebird": "^3.3.0",
     "debug": "^2.1.0",
+    "eslint": "^1.10.3",
     "lodash": "^4.3.0",
     "node-teamspeak": "^1.0.10",
     "request-ip": "^1.2.2"
@@ -23,8 +37,5 @@
   "engines": {
     "node": "5.6.x",
     "npm": "3.7.x"
-  },
-  "devDependencies": {
-    "eslint": "^1.10.3"
   }
 }

@@ -1,5 +1,4 @@
-node_modules
-test.*
-*.txt
-*.log
-processes.json
+node_modules/
+*.sublime-*
+build/*
+test.js

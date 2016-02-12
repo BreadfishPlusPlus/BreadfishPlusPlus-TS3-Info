@@ -1,87 +1,39 @@
 "use strict";
 
-const debug             = require("debug")("teamspeak");
-const TeamSpeakClient   = require("node-teamspeak");
-const _                 = require("lodash");
-const Promise           = require("bluebird");
+const debug = require("debug")("teamspeak");
+import Promise from "bluebird";
+import TeamSpeakClient from "node-teamspeak";
+import {merge, isArray} from "lodash";
 
-module.exports = class Teamspeak {
+export default class Teamspeak {
     constructor() {
         this.client = null;
-        this.serverinfo = {};
-        this.channellist = {};
-        this.clientlist = {};
-        this.lastUpdate = null;
-        this.error = null;
-
-        this.setup();
     }
-    setupInterval() {
-        debug(`setupInterval`);
-        setTimeout(this.setup.bind(this), parseInt(process.env.CHECK_INTERVAL, 10));
-    }
-    getData() {
-        debug(`getData`);
-        return _.defaults({
-            port: this.serverinfo.virtualserver_port,
-            name: this.serverinfo.virtualserver_name,
-            welcomemessage: this.serverinfo.virtualserver_welcomemessage,
-            platform: this.serverinfo.virtualserver_platform,
-            version: this.serverinfo.virtualserver_version,
-            uptime: this.serverinfo.virtualserver_uptime,
-            maxclients: this.serverinfo.virtualserver_maxclients,
+    async query(command, data) {
+        return new Promise((resolve, reject) => {
+            debug(`query "${command}" ...`, data);
 
-            channellist: this.channellist,
-
-            clientlist: this.clientlist,
-
-            lastUpdate: this.lastUpdate,
-
-            error: this.error
-        }, {
-            lastUpdate: 0,
-            address: process.env.TS_ADDRESS,
-            port: null,
-            cacheLifetime: parseInt(process.env.CHECK_INTERVAL, 10),
-            name: null,
-            welcomemessage: null,
-            platform: null,
-            version: null,
-            uptime: 0,
-            maxclients: 0,
-            channellist: {},
-            clientlist: {},
-            error: null
+            this.client.send(command, data, (error, response) => {
+                debug(`client response`, {error, response});
+                if (error) {
+                    return reject(merge(new Error(error.msg), error));
+                }
+                return resolve(response);
+            });
         });
     }
-    setup() {
-        debug(`setup`);
-        this.error = null;
-        Promise.resolve()
-            .bind(this)
-            .then(this.connect)
-            .then(this.login)
-            .then(this.selectVirtualServer)
-            .then(this.requestServerinfo)
-            .then(this.requestChannels)
-            .then(this.requestClients)
-            .then(this.close)
-            .then(this.setupInterval)
-            .then(() => this.lastUpdate = Date.now())
-            .catch((error) => this.error = error.toString());
-    }
-    connect() {
+    async connect(address, port) {
         return new Promise((resolve, reject) => {
-            debug(`connecting to ${process.env.TS_ADDRESS}:${process.env.TS_PORT}...`);
-            this.client = new TeamSpeakClient(process.env.TS_ADDRESS, parseInt(process.env.TS_PORT, 10));
+            debug(`connecting to ${address}:${port}...`);
+            this.client = new TeamSpeakClient(address, port);
 
             this.client.once("connect", () => {
                 debug("connected");
-                resolve();
+                resolve(this.client);
             });
             this.client.once("error", (error) => {
                 debug(`error connecting in: ${JSON.stringify(error)}`);
-                reject(new Error(`Verbindung zum Teamspeak-Server konnte nicht hergestellt werden.`));
+                reject(new Error(`Es konnte keine Verbindung zum Teamspeak-Server hergestellt werden.`));
             });
             this.client.once("close", (queue) => {
                 debug("close", queue);
@@ -91,9 +43,10 @@ module.exports = class Teamspeak {
             });
         });
     }
-    close() {
-        debug("closing connection...");
+
+    async disconnect() {
         return new Promise((resolve) => {
+            debug("disconnecting ...");
             this.client.once("timeout", () => {
                 this.client.removeAllListeners();
                 this.client = null;
@@ -103,99 +56,65 @@ module.exports = class Teamspeak {
             this.client.setTimeout(1);
         });
     }
-    login() {
-        return new Promise((resolve, reject) => {
-            debug(`logging in with ${process.env.USER_NAME}@${process.env.USER_PASS.replace(/./g, "*")}...`);
-
-            this.client.send("login", {
-                client_login_name: process.env.USER_NAME,
-                client_login_password: process.env.USER_PASS
-            }, (error) => {
-                if (error && error.id !== 0) {
-                    debug(`error logging in: ${JSON.stringify(error)}`);
-                    reject(new Error(`Login zum Teamspeak-Server konnte nicht durchgeführt werden.`));
-                } else {
-                    debug("successfully logged in");
-                    resolve();
-                }
-            });
-        });
+    async login(name, password) {
+        debug(`logging in ...`);
+        try {
+            await this.query("login", { client_login_name: name, client_login_password: password });
+            debug("successfully logged in");
+        }
+        catch (error) {
+            error.message = `Anmeldung fehlgeschlagen.`;
+            throw error;
+        }
     }
-    selectVirtualServer() {
-        return new Promise((resolve, reject) => {
-            debug(`selecting virtual server ${process.env.TS_VS}...`);
-
-            this.client.send("use", {
-                sid: parseInt(process.env.TS_VS, 10)
-            }, (error) => {
-                if (error && error.id !== 0) {
-                    debug(`error selecting virtual server: ${JSON.stringify(error)}`);
-                    reject(new Error(`VS konnte nicht ausgewählt werden.`));
-                } else {
-                    debug("virtual server selected");
-                    resolve();
-                }
-            });
-        });
+    async selectVirtualServer(serverId) {
+        debug(`selecting virtual server "${serverId}" ...`);
+        try {
+            await this.query("use", { sid: serverId });
+            debug("virtual server selected");
+        }
+        catch (error) {
+            error.message = `VS konnte nicht gewählt werden.`;
+            throw error;
+        }
     }
-    requestServerinfo() {
-        return new Promise((resolve, reject) => {
-            debug("requesting serverinfo");
-
-            this.client.send("serverinfo", (error, response) => {
-                this.serverinfo = {};
-                if (error && error.id !== 0) {
-                    debug(`error requesting serverinfo: ${JSON.stringify(error)}`);
-                    reject(new Error(`Abfrage auf Server Informationen war fehlerhaft.`));
-                } else {
-                    debug("serverinfo response", response);
-                    this.serverinfo = response;
-                    resolve();
-                }
-            });
-        });
+    async getServerInfo() {
+        debug(`requesting serverinfo ...`);
+        try {
+            const response = await this.query("serverinfo");
+            debug("serverinfo successfully requested");
+            return response;
+        }
+        catch (error) {
+            error.message = `Abfrage der Server Informationen ist fehlgeschlagen.`;
+            throw error;
+        }
     }
-    requestChannels() {
-        return new Promise((resolve, reject) => {
-            debug("requesting channellist");
-
-            this.client.send("channellist", (error, response) => {
-                this.channellist = {};
-                if (error && error.id !== 0) {
-                    debug(`error requesting channels: ${JSON.stringify(error)}`);
-                    reject(new Error(`Abfrage auf Channel Informationen war fehlerhaft.`));
-                } else {
-                    debug("successfully requested channellist", response);
-                    response.forEach((channel) => this.channellist[channel.cid] = channel.channel_name);
-                    resolve();
-                }
-            });
-        });
+    async getChannelList() {
+        debug(`requesting channellist ...`);
+        try {
+            const response = await this.query("channellist");
+            debug("channellist successfully requested");
+            return response;
+        }
+        catch (error) {
+            error.message = `Abfrage der Channelliste ist fehlgeschlagen.`;
+            throw error;
+        }
     }
-    requestClients() {
-        return new Promise((resolve, reject) => {
-            debug("requesting clientlist");
-
-            this.client.send("clientlist", (error, response) => {
-                this.clientlist = {};
-                if (error && error.id !== 0) {
-                    debug(`error requesting clients: ${JSON.stringify(error)}`);
-                    reject(new Error(`Abfrage auf Client Informationen war fehlerhaft.`));
-                } else {
-                    debug("successfully requested clientlist", response);
-
-                    if (!_.isArray(response)) {
-                        response = [response];
-                    }
-
-                    // ServerQuery clients rausfiltern
-                    response = _.filter(response, (client) => client.client_type !== 1);
-
-                    response.forEach((client) => this.clientlist[client.client_nickname] = client.cid);
-
-                    resolve();
-                }
-            });
-        });
+    async getClients() {
+        debug(`requesting clientlist ...`);
+        try {
+            let response = await this.query("clientlist");
+            if (!isArray(response)) {
+                response = [response];
+            }
+            debug("clientlist successfully requested");
+            return response;
+        }
+        catch (error) {
+            error.message = `Abfrage der Client Informationen ist fehlgeschlagen.`;
+            throw error;
+        }
     }
-};
+}
