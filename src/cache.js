@@ -1,5 +1,3 @@
-"use strict";
-
 const debug = require("debug")("cache");
 import {defaults, filter} from "lodash";
 import Teamspeak from "./teamspeak";
@@ -13,7 +11,7 @@ class Cache {
         this.error = null;
     }
     getData() {
-        debug(`getData ...`);
+        debug("getData ...");
         return defaults({
             port: this.serverinfo.virtualserver_port,
             name: this.serverinfo.virtualserver_name,
@@ -47,11 +45,11 @@ class Cache {
         });
     }
     setupTimeout() {
-        debug(`setupTimeout ...`);
+        debug("setupTimeout ...");
         setTimeout(this.requestData.bind(this), process.env.CHECK_INTERVAL);
     }
     async requestData() {
-        debug(`requestData ...`);
+        debug("requestData ...");
 
         this.error = null;
 

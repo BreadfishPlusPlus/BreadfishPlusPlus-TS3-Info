@@ -1,5 +1,3 @@
-"use strict";
-
 const debug = require("debug")("webserver");
 import {getClientIp} from "request-ip";
 import {createServer} from "http";

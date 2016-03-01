@@ -1,5 +1,3 @@
-"use strict";
-
 const debug = require("debug")("teamspeak");
 import Promise from "bluebird";
 import TeamSpeakClient from "node-teamspeak";
@@ -14,7 +12,7 @@ export default class Teamspeak {
             debug(`query "${command}" ...`, data);
 
             this.client.send(command, data, (error, response) => {
-                debug(`client response`, {error, response});
+                debug("client response", {error, response});
                 if (error) {
                     return reject(merge(new Error(error.msg), error));
                 }
@@ -33,7 +31,7 @@ export default class Teamspeak {
             });
             this.client.once("error", (error) => {
                 debug(`error connecting in: ${JSON.stringify(error)}`);
-                reject(new Error(`Es konnte keine Verbindung zum Teamspeak-Server hergestellt werden.`));
+                reject(new Error("Es konnte keine Verbindung zum Teamspeak-Server hergestellt werden."));
             });
             this.client.once("close", (queue) => {
                 debug("close", queue);
@@ -57,13 +55,13 @@ export default class Teamspeak {
         });
     }
     async login(name, password) {
-        debug(`logging in ...`);
+        debug("logging in ...");
         try {
             await this.query("login", { client_login_name: name, client_login_password: password });
             debug("successfully logged in");
         }
         catch (error) {
-            error.message = `Anmeldung fehlgeschlagen.`;
+            error.message = "Anmeldung fehlgeschlagen.";
             throw error;
         }
     }
@@ -74,36 +72,36 @@ export default class Teamspeak {
             debug("virtual server selected");
         }
         catch (error) {
-            error.message = `VS konnte nicht gewählt werden.`;
+            error.message = "VS konnte nicht gewählt werden.";
             throw error;
         }
     }
     async getServerInfo() {
-        debug(`requesting serverinfo ...`);
+        debug("requesting serverinfo ...");
         try {
             const response = await this.query("serverinfo");
             debug("serverinfo successfully requested");
             return response;
         }
         catch (error) {
-            error.message = `Abfrage der Server Informationen ist fehlgeschlagen.`;
+            error.message = "Abfrage der Server Informationen ist fehlgeschlagen.";
             throw error;
         }
     }
     async getChannelList() {
-        debug(`requesting channellist ...`);
+        debug("requesting channellist ...");
         try {
             const response = await this.query("channellist");
             debug("channellist successfully requested");
             return response;
         }
         catch (error) {
-            error.message = `Abfrage der Channelliste ist fehlgeschlagen.`;
+            error.message = "Abfrage der Channelliste ist fehlgeschlagen.";
             throw error;
         }
     }
     async getClients() {
-        debug(`requesting clientlist ...`);
+        debug("requesting clientlist ...");
         try {
             let response = await this.query("clientlist");
             if (!isArray(response)) {
@@ -113,7 +111,7 @@ export default class Teamspeak {
             return response;
         }
         catch (error) {
-            error.message = `Abfrage der Client Informationen ist fehlgeschlagen.`;
+            error.message = "Abfrage der Client Informationen ist fehlgeschlagen.";
             throw error;
         }
     }
