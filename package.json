@@ -1,6 +1,6 @@
 {
   "name": "teamspeak-info",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "main": "src/index.js",
   "private": true,
   "repository": {
@@ -20,21 +20,21 @@
     "postinstall": "npm run clean -s && npm run build"
   },
   "dependencies": {
-    "babel-cli": "^6.6.0",
-    "babel-eslint": "^5.0.0",
-    "babel-plugin-transform-async-to-generator": "^6.5.0",
-    "babel-plugin-transform-es2015-destructuring": "^6.6.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.6.3",
-    "babel-plugin-transform-es2015-parameters": "^6.6.0",
-    "bluebird": "^3.3.3",
+    "babel-cli": "^6.6.5",
+    "babel-preset-node5": "^11.0.0",
+    "bluebird": "^3.3.4",
     "debug": "^2.1.0",
-    "eslint": "^2.2.0",
-    "lodash": "^4.5.1",
+    "express": "^4.13.4",
+    "lodash": "^4.6.1",
     "node-teamspeak": "^1.0.10",
     "request-ip": "^1.2.2"
   },
+  "devDependencies": {
+    "babel-eslint": "5.0.0",
+    "eslint": "2.2.0"
+  },
   "engines": {
-    "node": "5.7.x",
-    "npm": "3.7.x"
+    "node": "5.9.x",
+    "npm": "3.8.x"
   }
 }
