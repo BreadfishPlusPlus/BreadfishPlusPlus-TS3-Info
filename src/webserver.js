@@ -1,22 +1,29 @@
 const debug = require("debug")("webserver");
 import {getClientIp} from "request-ip";
-import {createServer} from "http";
+import express from "express";
 import cache from "./cache";
 
+const webserver = express();
 
-createServer((request, response) => {
-    const clientIp = getClientIp(request);
-    debug(`serving reqeust ${request.url} from ${clientIp}`);
+webserver.set("case sensitive routing", true);
+webserver.set("json spaces", 2);
+webserver.set("trust proxy", true);
+webserver.set("x-powered-by", false);
 
-    response.writeHead(200, {
-        "Content-Type": "application/json; charset=utf-8",
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "no-cache",
-        "Pragma": "no-cache",
-        "Expires": "0"
-    });
-    return response.end(JSON.stringify(cache.getData(), null, 2));
-}).listen(process.env.PORT);
-debug(`webserver started @ port ${process.env.PORT}`);
+webserver.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Expose-Headers", "Content-Type");
+    debug(`serving reqeust ${req.url} from ${getClientIp(req)}`);
+    next();
+});
+webserver.get("/", (req, res) => res.json(cache.getData()));
+webserver.use((req, res) => res.status(404).send("400 + 4"));
+
+const svr = webserver.listen(process.env.PORT, "0.0.0.0", (error) => {
+    if (error) {
+        throw error;
+    }
+    debug(`webserver started: ${JSON.stringify(svr.address())}`);
+});
 
 cache.requestData();
