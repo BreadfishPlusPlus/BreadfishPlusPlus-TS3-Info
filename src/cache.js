@@ -32,7 +32,7 @@ class Cache {
             lastUpdate: 0,
             address: process.env.TS_ADDRESS,
             port: null,
-            cacheLifetime: process.env.CHECK_INTERVAL,
+            cacheLifetime: parseInt(process.env.CHECK_INTERVAL, 10),
             name: null,
             welcomemessage: null,
             platform: null,
