@@ -29,7 +29,7 @@ Kein Standartwert.
 #### `DEBUG`
 Siehe [debug](https://github.com/visionmedia/debug).  
 Kein Standartwert.  
-Gültige Werte sind: `webserver` & `teamspeak`.
+Gültige Werte sind: `cache`, `webserver` & `teamspeak`.
 
 ## License
 The MIT License (MIT)
