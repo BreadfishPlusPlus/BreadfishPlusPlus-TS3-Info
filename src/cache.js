@@ -1,6 +1,14 @@
 const debug = require("debug")("cache");
 import {defaults, filter} from "lodash";
 import Teamspeak from "./teamspeak";
+import {getEnv} from "./getEnv";
+
+const TS_ADDRESS = getEnv("TS_ADDRESS").optional("127.0.0.1").string();
+const TS_PORT = getEnv("TS_PORT").optional(10011).number();
+const CHECK_INTERVAL = getEnv("CHECK_INTERVAL").optional(300000).number();
+const USER_NAME = getEnv("USER_NAME").required().string();
+const USER_PASS = getEnv("USER_PASS").required().string();
+const TS_VS = getEnv("TS_VS").optional(1).number();
 
 class Cache {
     constructor() {
@@ -30,9 +38,9 @@ class Cache {
             error: this.error
         }, {
             lastUpdate: 0,
-            address: process.env.TS_ADDRESS,
+            address: TS_ADDRESS,
             port: null,
-            cacheLifetime: parseInt(process.env.CHECK_INTERVAL, 10),
+            cacheLifetime: CHECK_INTERVAL,
             name: null,
             welcomemessage: null,
             platform: null,
@@ -46,7 +54,7 @@ class Cache {
     }
     setupTimeout() {
         debug("setupTimeout ...");
-        setTimeout(this.requestData.bind(this), process.env.CHECK_INTERVAL);
+        setTimeout(this.requestData.bind(this), CHECK_INTERVAL);
     }
     async requestData() {
         debug("requestData ...");
@@ -57,15 +65,15 @@ class Cache {
             const tsclient = new Teamspeak();
 
             /* connect */
-            await tsclient.connect(process.env.TS_ADDRESS, process.env.TS_PORT);
+            await tsclient.connect(TS_ADDRESS, TS_PORT);
 
 
             /* login */
-            await tsclient.login(process.env.USER_NAME, process.env.USER_PASS);
+            await tsclient.login(USER_NAME, USER_PASS);
 
 
             /* selectVirtualServer */
-            await tsclient.selectVirtualServer(process.env.TS_VS);
+            await tsclient.selectVirtualServer(TS_VS);
 
 
             /* requestServerinfo */
